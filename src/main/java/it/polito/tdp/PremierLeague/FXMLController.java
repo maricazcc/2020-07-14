@@ -35,7 +35,7 @@ public class FXMLController {
     private Button btnSimula; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbSquadra"
-    private ComboBox<?> cmbSquadra; // Value injected by FXMLLoader
+    private ComboBox<String> cmbSquadra; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtN"
     private TextField txtN; // Value injected by FXMLLoader
@@ -48,16 +48,71 @@ public class FXMLController {
 
     @FXML
     void doClassifica(ActionEvent event) {
+    	txtResult.clear();
+    	
+    	if(this.model.getGrafo() == null) {
+    		txtResult.appendText("Crea prima il grafo!");
+    		return;
+    	}
+    	    	
+    	String team = cmbSquadra.getValue();
+    	if(team == null) {
+    		txtResult.appendText("Seleziona la squadra!");
+    		return;
+    	}
+    	
+    	this.model.squadreMigliori(team);
+    	this.model.squadrePeggiori(team);
+    	
+    	txtResult.appendText("SQUADRE MIGLIORI: \n");        
+    	txtResult.appendText(this.model.stampaSquadreMigliori());
+    	
+    	txtResult.appendText("\n");
+    	
+    	txtResult.appendText("SQUADRE PEGGIORI: \n");        
+    	txtResult.appendText(this.model.stampaSquadrePeggiori());
 
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	txtResult.clear();
+    	String msg = this.model.creaGrafo();
+    	txtResult.appendText(msg);
+    	
+    	cmbSquadra.getItems().addAll(this.model.getTeams());
     }
 
     @FXML
     void doSimula(ActionEvent event) {
+        txtResult.clear();
+    	
+    	if(this.model.getGrafo() == null) {
+    		txtResult.appendText("Crea prima il grafo!");
+    		return;
+    	}
+    	
+    	int N;
+    	int X;
+    	
+    	try {
+    		N = Integer.parseInt(txtN.getText());
+    	} catch(NumberFormatException e) {
+    		e.printStackTrace();
+    		return;
+    	}
+    	
+    	try {
+    		X = Integer.parseInt(txtX.getText());
+    	} catch(NumberFormatException e) {
+    		e.printStackTrace();
+    		return;
+    	}   	
+    	    	
+    	this.model.simula(N, X);
+    	this.txtResult.appendText("Media Reporter: " + this.model.getMedia() + "\n");
+    	this.txtResult.appendText("Partite inferiori a X: " + this.model.getInferiore() + "\n");
+   
 
     }
 
